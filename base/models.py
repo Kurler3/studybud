@@ -40,6 +40,12 @@ class Room(models.Model):
     # AUTO NOW ADD MEANS WHEN IT WAS ADDED, SO NO SNAPSHOTS LATER ON, IT WILL NEVER CHANGE
     created = models.DateTimeField(auto_now_add=True)
     
+    # OVERRIDING THE META CLASS OF THE MODEL TO CHANGE THE ORDERING WHICH OBJECTS
+    # COME WHEN QUERYING.
+    # LATEST UPDATED FIRST, THEN BY LATEST CREATED
+    class Meta:
+        ordering = ['-updated', '-created']
+    
     def __str__(self):
         return self.name
     

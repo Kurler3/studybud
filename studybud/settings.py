@@ -29,9 +29,6 @@ SECRET_KEY = os.environ['SECRET_KEY'] # Instead of your actual secret key
 DEBUG = os.environ['DEBUG']
 
 
-
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
