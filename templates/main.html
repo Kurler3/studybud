@@ -10,6 +10,15 @@
     <!-- NAVBAR! -->
     {% include 'navbar.html' %}
 
+    <!-- FLASH MESSAGES -->
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     <!-- CHILDREN TEMPLATES -->
     {% block content %}
         
