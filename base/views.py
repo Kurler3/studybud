@@ -1,13 +1,21 @@
 from django.shortcuts import render, redirect
-
+from django.db.models import Q
 from .models import Room, Topic
 
 from .forms import RoomForm
 
+
+# LOGIN PAGE
+def loginPage(request):
+    
+    
+    
+    
+    context = {}
+    
+    return render(request, 'base/login_register.html', context)
+
 # Create your views here.
-
-
-
 def home(request):
 
     # GET Q IF EXISTS
@@ -15,12 +23,17 @@ def home(request):
     
     # GETS ALL ROOMS FROM THE ROOM TABLE
     # CHECK IF THE TOPIC NAME OF EACH OBJECT CONTAINS Q (TOPIC NAME IN SEARCH PARAMS)
-    rooms = Room.objects.filter(topic__name__icontains=q)
+    # OR IF THE ROOM NAME CONTAINS Q
+    rooms = Room.objects.filter(
+        Q(topic__name__icontains=q) |
+        Q(name__icontains=q) |
+        Q(description__icontains=q)
+    )
     
     # GET ALL TOPICS
     topics = Topic.objects.all()
     
-    context = {'rooms': rooms, 'topics': topics}
+    context = {'rooms': rooms, 'topics': topics, 'room_count': rooms.count()}
     
     return render(request, 'base/home.html', context)
 
