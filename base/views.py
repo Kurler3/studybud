@@ -7,12 +7,17 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-
+from django.contrib.auth.forms import UserCreationForm
 
 
 
 # LOGIN PAGE
 def loginPage(request):
+
+    page = 'login'
+        
+    if request.user.is_authenticated:
+        return redirect('home')
     
     if request.method == "POST":   
         username = request.POST.get('username')
@@ -25,18 +30,44 @@ def loginPage(request):
             messages.error(request, "User doesn't exist")
 
         # CHECK IF CREDS ARE CORRECT
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=username.lower(), password=password)
 
         # IF CREDS CORRECT
         if user is not None:
+            
             login(request, user)
             return redirect('home')
         else:
             messages.error(request, "Wrong credentials")
         
-    context = {}
+    context = {'page': page}
     
     return render(request, 'base/login_register.html', context)
+
+def registerUser(request):
+    page = 'register'
+
+    form = UserCreationForm()
+    
+    if request.method == "POST":
+        # FILL FORM
+        form = UserCreationForm(request.POST)
+
+        # CHECK IF IS VALID
+        if form.is_valid():
+            # SAVING BUT FREEZING IT
+            user = form.save(commit=False)
+            
+            # IF USER CAPITALIZED THEIR USERNAME, MAKE IT LOWERCASE
+            user.username = user.username.lower()
+            
+            # SAVE IT
+            user.save()
+        
+    
+    context = {'page': page, 'form': form}
+    
+    return render(request,'base/login_register.html', context)
 
 def logoutUser(request):
     logout(request)
@@ -121,6 +152,9 @@ def createRoom(request):
 def deleteRoom(request, pk):
     
     room = Room.objects.get(id=pk)
+    
+    if request.user != room.host:
+        return HttpResponse("You are not allowed here")
     
     if request.method == 'POST':
         # DELETE FROM DB
