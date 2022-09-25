@@ -31,7 +31,9 @@ class Room(models.Model):
     description = models.TextField(null=True, blank=True)
     
     # USERS ACTIVE IN THE ROOM
-    # participants 
+    # NEED TO SET THE RELATED NAME BECAUSE THERE'S ALREADY A RELATION "host"
+    # BLANK TO TRUE SO THAT WHEN CREATING A ROOM, CAN SUBMIT WITHOUT HAVING PARTICIPANTS
+    participants = models.ManyToManyField(User, related_name="participants", blank=True)
 
     # ANYTIME AN ITEM FROM THIS TABLE IS UPDATED, SETS THE VALUE TO THE TIME IT IS BEING UPDATED.
     updated = models.DateTimeField(auto_now=True)
